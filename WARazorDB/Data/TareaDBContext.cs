@@ -3,17 +3,12 @@ using WARazorDB.Models;
 
 namespace WARazorDB.Data
 {
-    public class TareaDBContext : DbContext
+    public class TareaDbContext : DbContext
     {
-        public TareaDBContext(DbContextOptions<TareaDBContext> options) : base(options) //Tarea investigar
+        public TareaDbContext(DbContextOptions<TareaDbContext> options) : base(options) //Tarea investigar
         {
         }
 
         public DbSet<Tarea> Tareas { get; set; }  //Investigar
-
-        protected TareaDBContext()
-        {
-
-        }
     }
 }
