@@ -23,6 +23,8 @@ namespace WARazorDB.Pages
         [BindProperty]
         public Tarea Tarea { get; set; } = default!;
 
+        public SelectList EstadosList { get; set; }
+
         public async Task<IActionResult> OnGetAsync(int? id)
         {
             if (id == null)
@@ -36,6 +38,10 @@ namespace WARazorDB.Pages
                 return NotFound();
             }
             Tarea = tarea;
+
+            // Preparar la lista de estados
+            EstadosList = new SelectList(Tarea.EstadosPermitidos);
+
             return Page();
         }
 
@@ -43,6 +49,12 @@ namespace WARazorDB.Pages
         // For more information, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
+            // Validar que el estado sea uno de los permitidos
+            if (!Tarea.EstadosPermitidos.Contains(Tarea.estado))
+            {
+                ModelState.AddModelError("Tarea.estado", "El estado seleccionado no es válido");
+            }
+
             if (!ModelState.IsValid)
             {
                 return Page();

@@ -21,6 +21,12 @@ namespace WARazorDB.Pages
 
         public IActionResult OnGet()
         {
+            // Inicializar la tarea con estado "Pendiente" por defecto
+            Tarea = new Tarea
+            {
+                estado = "Pendiente",
+                fechaVencimiento = DateTime.Today.AddDays(1) // Fecha por defecto: mañana
+            };
             return Page();
         }
 
@@ -30,6 +36,8 @@ namespace WARazorDB.Pages
         // For more information, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
+            // Forzar el estado a "Pendiente" en Create
+            Tarea.estado = "Pendiente";
             if (!ModelState.IsValid)
             {
                 return Page();

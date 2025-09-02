@@ -2,53 +2,115 @@
 @model WARazorDB.Pages.IndexModel
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Index - Gestión de Tareas";
 }
 
-<h1>Index</h1>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-lg border-0">
+                <div class="card-header text-white bg-dark d-flex justify-content-between align-items-center">
+                    <h2 class="mb-0">
+                        <i class="fas fa-tasks me-2"></i>Gestión de Tareas
+                    </h2>
+                    <a asp-page="Create" class="btn btn-outline- btn-lg">
+                        <i class="fas fa-plus me-1"></i>Nueva Tarea
+                    </a>
+                </div>
+                <div class="card-body p-0">
+                    @if (Model.Tarea != null && Model.Tarea.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover table-striped mb-0 modern-table">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th class="px-4 py-3">
+                                            <i class="fas fa-tag me-2"></i>
+                                            @Html.DisplayNameFor(model => model.Tarea[0].nombreTarea)
+                                        </th>
+                                        <th class="px-4 py-3">
+                                            <i class="fas fa-calendar me-2"></i>
+                                            @Html.DisplayNameFor(model => model.Tarea[0].fechaVencimiento)
+                                        </th>
+                                        <th class="px-4 py-3">
+                                            <i class="fas fa-flag me-2"></i>
+                                            @Html.DisplayNameFor(model => model.Tarea[0].estado)
+                                        </th>
+                                        <th class="px-4 py-3">
+                                            <i class="fas fa-user me-2"></i>
+                                            @Html.DisplayNameFor(model => model.Tarea[0].idUsuario)
+                                        </th>
+                                        <th class="px-4 py-3 text-center">
+                                            <i class="fas fa-cogs me-2"></i>Acciones
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.Tarea)
+                                    {
+                                        <tr class="task-row">
+                                            <td class="px-4 py-3">
+                                                <strong>@Html.DisplayFor(modelItem => item.nombreTarea)</strong>
+                                            </td>
+                                            <td class="px-4 py-3">
+                                                <span class="date-badge">
+                                                    @Html.DisplayFor(modelItem => item.fechaVencimiento)
+                                                </span>
+                                            </td>
+                                            <td class="px-4 py-3">
+                                                @{
+                                                    string badgeClass = item.estado switch
+                                                    {
+                                                        "Pendiente" => "badge bg-warning text-dark",
+                                                        "En Curso" => "badge bg-primary",
+                                                        "Finalizado" => "badge bg-success",
+                                                        "Cancelado" => "badge bg-danger",
+                                                        _ => "badge bg-secondary"
+                                                    };
+                                                }
+                                                <span class="@badgeClass fs-6 px-3 py-2">
+                                                    @Html.DisplayFor(modelItem => item.estado)
+                                                </span>
+                                            </td>
+                                            <td class="px-4 py-3">
+                                                <span class="user-badge">
+                                                    Usuario #@Html.DisplayFor(modelItem => item.idUsuario)
+                                                </span>
+                                            </td>
+                                            <td class="px-4 py-3 text-center">
+                                                <div class="btn-group" role="group">
+                                                    <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary" title="Editar">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    <a asp-page="./Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info" title="Detalles">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    <a asp-page="./Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                                        <i class="fas fa-trash"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                            <h4 class="text-muted">No hay tareas registradas</h4>
+                            <p class="text-muted">Comienza creando tu primera tarea</p>
+                            <a asp-page="Create" class="btn btn-primary btn-lg">
+                                <i class="fas fa-plus me-1"></i>Crear Primera Tarea
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-<p>
-    <a asp-page="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Tarea[0].nombreTarea)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Tarea[0].fechaVencimiento)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Tarea[0].estado)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Tarea[0].idUsuario)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model.Tarea) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.nombreTarea)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.fechaVencimiento)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.estado)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.idUsuario)
-            </td>
-            <td>
-                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+

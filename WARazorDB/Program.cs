@@ -1,14 +1,25 @@
 using Microsoft.EntityFrameworkCore;
+using WARazorDB.Interfaces;
+using WARazorDB.Seeders;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 
+// Configurar el contexto de la base de datos
 builder.Services.AddDbContext<WARazorDB.Data.TareaDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+//Seeder
+// Registrar el servicio de inicialización de la base de datos
+// Seeder debe ser una clase normal que implementa IDbInitializer
+//builder.Services.AddScoped<IDbInitializer, TareaSeeder>();
+
 var app = builder.Build();
+
+//Llamada al inicializador de la BD
+//SeedDatabase();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -28,3 +39,14 @@ app.UseAuthorization();
 app.MapRazorPages();
 
 app.Run();
+
+void SeedDatabase()
+{
+    // Crear un nuevo scope para resolver el servicio IDbInitializer
+    using (var scope = app.Services.CreateScope())
+    {
+        var initializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+        // Llama al método Initialize en la instancia de Seeder
+        initializer.Initialize(scope.ServiceProvider);
+    }
+}
